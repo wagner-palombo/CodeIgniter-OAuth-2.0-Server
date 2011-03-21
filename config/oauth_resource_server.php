@@ -1,4 +1,4 @@
-<?php
+<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
  * OAuth 2.0 client for use with the included auth server
  *
@@ -30,3 +30,12 @@
 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 	THE SOFTWARE.
 */
+
+
+// Change these
+$config['oauth_client_id'] = '';
+$config['oauth_client_secret'] = '';
+$config['oauth_redirect_uri'] = 'http://client-url.com/signin/redirect';
+$config['oauth_access_token_param'] = 'access_token'; // Facebook use access_token, Google/Twitter use oauth_token. Or choose something else
+$config['oauth_verify_uri'] = 'https://auth-server-url.com/oauth2/verify_access_token';
+$config['oauth_verify_uri_params'] = array('access_token');
