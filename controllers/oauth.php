@@ -1,20 +1,36 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 'On');
- 
 /**
- * OAuth 2.0 authorization server (draft 13 spec)
+ * OAuth 2.0 client for use with the included auth server
  *
- * It is highly recommended you use the latest CodeIgniter Reactor and enable XSS filtering and CSRF protection
- *
- * @package             CodeIgniter
  * @author              Alex Bilbie | www.alexbilbie.com | alex@alexbilbie.com
- * @copyright   		Copyright (c) 2010, Alex Bilbie.
- * @license             http://codeigniter.com/user_guide/license.html
- * @link                http://alexbilbie.com
- * @version             Version 0.1
+ * @copyright   		Copyright (c) 2011, Alex Bilbie.
+ * @license             http://www.opensource.org/licenses/mit-license.php
+ * @link                https://github.com/alexbilbie/CodeIgniter-OAuth-2.0-Server
+ * @version             Version 0.1 
  */
  
+/*
+	Copyright (c) 2011 Alex Bilbie | alex@alexbilbie.com
+	
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+	
+	The above copyright notice and this permission notice shall be included in
+	all copies or substantial portions of the Software.
+	
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+	THE SOFTWARE.
+*/
+
 class Oauth extends CI_Controller {
 		
 	function __construct()
@@ -421,6 +437,7 @@ class Oauth extends CI_Controller {
 	
 	/**
 	 * Generates a new auth code and redirects the user
+	 * Used in the web-server flow
 	 * 
 	 * @access private
 	 * @param string $client_id
@@ -441,6 +458,7 @@ class Oauth extends CI_Controller {
 	
 	/**
 	 * Generates a new auth access token and redirects the user
+	 * Used in the user-agent flow
 	 * 
 	 * @access private
 	 * @param string $client_id
@@ -452,7 +470,8 @@ class Oauth extends CI_Controller {
 	 */
 	private function fast_token_redirect($client_id = "", $user_id = "", $redirect_uri = "", $scopes = array(), $state = "")
 	{
-		$code = $this->oauth_auth_server->new_auth_code($client_id, $user_id, $redirect_uri, $scopes);
+		// Creates a limited access token due to lack of verification/authentication
+		$token = $this->oauth_auth_server->new_auth_code($client_id, $user_id, $redirect_uri, $scopes, 1);
 		$redirect_uri = $this->oauth_auth_server->redirect_uri($redirect_uri, array('code='.$code."&state=".$state), '#');
 		
 		$this->session->unset_userdata(array('params'=>'','client_details'=>'', 'sign_in_redirect'=>''));

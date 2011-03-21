@@ -1,19 +1,37 @@
 <?php
-error_reporting(-1);
-ini_set('display_errors', '1');
-
 /**
- * OAuth 2.0 authorization server (draft 13 spec)
+ * OAuth 2.0 client for use with the included auth server
  *
- * @package             CodeIgniter
  * @author              Alex Bilbie | www.alexbilbie.com | alex@alexbilbie.com
- * @copyright   		Copyright (c) 2010, Alex Bilbie.
- * @license             http://codeigniter.com/user_guide/license.html
- * @link                http://alexbilbie.com
- * @version             Version 0.1
+ * @copyright   		Copyright (c) 2011, Alex Bilbie.
+ * @license             http://www.opensource.org/licenses/mit-license.php
+ * @link                https://github.com/alexbilbie/CodeIgniter-OAuth-2.0-Server
+ * @version             Version 0.1 
  *
  * Remember to edit validate_user() to meet fit your existing application!
  */
+
+/*
+	Copyright (c) 2011 Alex Bilbie | alex@alexbilbie.com
+	
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+	
+	The above copyright notice and this permission notice shall be included in
+	all copies or substantial portions of the Software.
+	
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+	THE SOFTWARE.
+*/
 
 class Oauth_auth_server {
 
@@ -223,33 +241,40 @@ class Oauth_auth_server {
 		}
 	}
 	
-	function new_access_token()
-	{
-		
-	}
-	
 	
 	/**
-	 * Tests if a user has already authorized an application and an access token has been granted
+	 * Generates a new access token (with out existing session)
 	 * 
 	 * @access public
-	 * @param string $user_id
-	 * @param string $client_id
-	 * @return bool
+	 * @param string $client_id. (default: '')
+	 * @param string $user_id. (default: '')
+	 * @param string $redirect_uri. (default: '')
+	 * @param array $scopes. (default: array())
+	 * @param int $limited. (default: 0)
+	 * @return void
 	 */
-	function access_token_exists($user_id = '', $client_id = '')
+	function new_access_token($client_id = '', $user_id = '', $redirect_uri = '', $scopes = array(), $limited = 0)
 	{
-		$token_query = $this->CI->db->select('access_token')->get_where('oauth_sessions', array('client_id' => $client_id, 'user_id'=>$user_id, 'access_token !=' => NULL));
+		$access_token = time().'|'.md5(uniqid());
 		
-		if ($token_query->num_rows() == 1)
+		$this->CI->db->insert('oauth_sessions', array('client_id' => $client_id, 'redirect_uri' => $redirect_uri, 'user_id' => $user_id, 'access_token' => $code, 'first_requested' => time(), 'last_updated' => time(), 'code' => NULL, 'limited' => $limited));
+		$insert_id = $this->CI->db->insert_id();
+		
+		// Add the scopes
+		if (count($scopes) > 0)
 		{
-			return TRUE;
+			foreach ($scopes as $scope)
+			{
+				$scope = trim($scope);
+				
+				if(trim($scope) !== "")
+				{
+					$this->CI->db->insert('oauth_session_scopes', array('session_id' => $insert_id, 'scope'=>$scope));
+				}
+			}
 		}
 		
-		else
-		{
-			return FALSE;
-		}
+		return $access_token;
 	}
 	
 	
@@ -295,6 +320,30 @@ class Oauth_auth_server {
 			}
 		}
 		
+	}
+	
+	
+	/**
+	 * Tests if a user has already authorized an application and an access token has been granted
+	 * 
+	 * @access public
+	 * @param string $user_id
+	 * @param string $client_id
+	 * @return bool
+	 */
+	function access_token_exists($user_id = '', $client_id = '')
+	{
+		$token_query = $this->CI->db->select('access_token')->get_where('oauth_sessions', array('client_id' => $client_id, 'user_id'=>$user_id, 'access_token !=' => NULL));
+		
+		if ($token_query->num_rows() == 1)
+		{
+			return TRUE;
+		}
+		
+		else
+		{
+			return FALSE;
+		}
 	}
 	
 	
