@@ -17,7 +17,7 @@
 			
 	<h2>Please enter your username and password to continue</h2>
 				
-	<?php echo form_open('oauth2/sign_in'); ?>
+	<?php echo form_open('oauth/sign_in'); ?>
 	
 		<?php if($error): ?>
 		
@@ -44,7 +44,7 @@
 		</p>
 		
 		<p>
-			<input type="submit" name="signin" value="Sign-in">
+			<input type="submit" name="validate_user" value="Sign-in">
 		</p>
 	
 	<?php echo form_close(); ?>

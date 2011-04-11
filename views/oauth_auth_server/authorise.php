@@ -22,7 +22,7 @@
 	
 	<p>If you click deny then you will be redirected back to the application and there will be no exchange of data. You are free to approve this application again at a later date.</p>
 				
-	<?php echo form_open('oauth2/authorise'); ?>
+	<?php echo form_open('oauth/authorise'); ?>
 		<p>
 			<input type="submit" class="button" value="Approve" name="doauth" /> or
 			<input type="submit" class="button" value="Deny" name="doauth" />
