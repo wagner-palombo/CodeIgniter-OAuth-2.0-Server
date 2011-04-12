@@ -206,7 +206,7 @@ class Oauth_auth_server {
 	function get_access_token($session_id = '')
 	{
 		// Check if an access token exists already
-		$exists_query = $this->CI->db->select('access_token')->get_where('oauth_sessions', array('id' => $session_id, 'access_token !=' => NULL));
+		$exists_query = $this->CI->db->select('access_token')->get_where('oauth_sessions', array('id' => $session_id, 'access_token IS NOT NULL' => NULL));
 		
 		// If an access token already exists, return it and remove the authorization code
 		if ($exists_query->num_rows() == 1)
@@ -232,7 +232,7 @@ class Oauth_auth_server {
 			);
 			
 			// Update the OAuth session
-			$this->CI->db->where(array('session_id' => $session_id))->update('oauth_sessions', $updates);
+			$this->CI->db->where(array('id' => $session_id))->update('oauth_sessions', $updates);
 			
 			// Update the session scopes with the access token
 			$this->CI->db->where(array('session_id' => $session_id))->update('oauth_session_scopes', array('access_token' => $access_token));
