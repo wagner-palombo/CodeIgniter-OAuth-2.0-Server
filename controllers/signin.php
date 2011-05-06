@@ -67,7 +67,7 @@ class Signin extends CI_Controller {
 			
 			if ($access_token)
 			{
-				// Check to see a user already exists in your app's database based by searching for the access token
+				// Check to see a user already exists in your app's database based by searching for the access token - line below will not work
 				$user_exists = $this->session->access_token_exists($access_token);
 				
 				if ($user_exists)

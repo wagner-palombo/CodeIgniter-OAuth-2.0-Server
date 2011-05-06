@@ -11,7 +11,7 @@
  * @version             Version 0.1
  */
 
-class Oauth {
+class Oauth_client {
 
 	protected $ci;
 	public $error = '';
@@ -19,7 +19,7 @@ class Oauth {
 	function __construct()
 	{
 		$this->ci =& get_instance();
-		$this->load->config('oauth_client');
+		$this->ci->load->config('oauth_client');
 	}
 	
 	/**
