@@ -55,6 +55,7 @@ class Signin extends CI_Controller {
 	{
 		$this->load->library('oauth_client');
 		
+		// If there was a problem with the auth server or the user declined your application there will be an error
 		if ($this->input->get('error'))
 		{
 			show_error('[OAuth error] '.$this->input->get('error'), 500);
@@ -62,7 +63,31 @@ class Signin extends CI_Controller {
 						
 		elseif ($this->input->get('code'))
 		{
-			$code = $this->input->get('code');
+			$code = trim($this->input->get('code'));
+			$state = trim($this->input->get('state'));
+			
+			// Convert the states back to an array and validate the CSRF token
+			if ($state !== "")
+			{
+				$states = explode('&', urldecode($state));
+				$state_params = array();
+				
+				foreach($states as $v)
+				{
+					$s = explode('=', $v);
+					$state_params[$s[0]] = $s[1];
+				}
+				
+				// Validate the CSRF token
+				if (isset($state_params['oauth_csrf']))
+				{
+					if ($state_params['oauth_csrf'] !== $this->session->userdata('oauth_csrf'))
+					{
+						show_error('The state does not match. You may be a victim of CSRF.');
+					}
+				}
+			}
+			
 			$access_token = $this->oauth_client->get_access_token($code);
 			
 			if ($access_token)

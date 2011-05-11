@@ -13,7 +13,7 @@
 
 class Oauth_client {
 
-	protected $ci;
+	private $ci;
 	public $error = '';
 	
 	function __construct()
@@ -24,10 +24,37 @@ class Oauth_client {
 	
 	/**
 	 * Redirects the user to the OAuth sign in page
+	 *
+	 * $state is an key value array of parameters which will be contactenated with the redirect_uri (for example session IDs)
+	 * $csrf is a flag to enable CSRF (cross site request forgery) protection. Highly recommended you leave it enabled
+	 *
+	 * @access public
+	 * @param array state
+	 * @param bool csrf
 	 */
-	public function sign_in()
+	public function sign_in($state_params = array(), $csrf = TRUE)
 	{
-		redirect($this->ci->config->item('oauth_signin_url'));
+		if ($csrf)
+		{
+			$token = md5(uniqid());
+			$this->session->set_userdata('oauth_csrf' => $token);
+			
+			$state_params['oauth_csrf'] = $token;
+		}
+		
+		if (count($state_params) > 0)
+		{
+			$states = array();
+			foreach ($state_params as $k=>v)
+			{
+				$states[] = $k . '=' . $v;
+			}
+			
+			$state = implode('&', $states);
+			$state = urlencode($state);
+		}
+		
+		redirect($this->ci->config->item('oauth_signin_url') . $state);
 	}
 	
 	/**
