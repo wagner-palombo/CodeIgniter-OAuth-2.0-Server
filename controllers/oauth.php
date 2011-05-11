@@ -6,7 +6,7 @@
  * @copyright   		Copyright (c) 2011, Alex Bilbie.
  * @license             http://www.opensource.org/licenses/mit-license.php
  * @link                https://github.com/alexbilbie/CodeIgniter-OAuth-2.0-Server
- * @version             Version 0.1 
+ * @version             Version 0.2
  */
  
 /*

@@ -8,7 +8,7 @@
  * @copyright   		Copyright (c) 2010, Alex Bilbie.
  * @license             http://codeigniter.com/user_guide/license.html
  * @link                http://alexbilbie.com
- * @version             Version 0.1
+ * @version             Version 0.2
  */
 
 class Oauth_client {

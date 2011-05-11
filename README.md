@@ -5,12 +5,11 @@ This is an implementation of an OAuth 2.0 (draft 13) authorisation server, resou
 * Web server flow
 * Auto approved applications
 * JavaScript user-agent flow
-* Client (web-server)
+* Client (user-agent)
 
 ## Planned features:
 
 * Refresh tokens
-* Client (user-agent)
 
 It is highly recommended that you use the latest version of CodeIgniter Reactor.
 
